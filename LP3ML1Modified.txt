@@ -1,0 +1,42 @@
+import numpy as np
+import pandas as pd
+from sklearn.modelselection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import metrics
+
+df=pd.readcsv('uber.csv')
+
+df.head()
+
+df=df.drop(['Unnamed:0,'key','pickup_datetime'],axis=1)
+df.dropna(axis=1,inplace=True)
+
+def remove_outlier(df1, col):
+	Q1=df1[col].quantile(0.25)
+	Q3=df1[col].quantile(0.75)
+	IQR=Q3-Q1
+	lower_whisker=Q1-1.5*IQR
+	upper_whisker=Q3+1.5*IQR
+	df[col]=np.clip(df1[col],lower_whisker,upper_whiser)
+	return df1
+def treat_outliers_all(df1,col_list):
+	for c i col_list:
+		df1=remove_outlier(df,c)
+	return df1
+df=treat_outliers_all(df,df.iloc[:,0::])
+
+y=pd.DataFrame(df['fare_amount'])
+x=df.drop('fare_amount',axis=1)
+
+x_train, x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=1)
+
+rf_reg=RandomForestRegression(n_estimator=100,random_state=10)
+rf_reg.fit(x_trin,y_train)
+y_pred_RF=rf_reg.predict(x_test)
+
+rf_reg_MAE=metrics.mean_absolute_error(y_test,y_pred_RF)
+print('Mean Absolute Errror:',rf_reg_MAE)
+rf_reg_MSE=metrics.mean_squared_error(y_test,y_pred_RF)
+print('Mean Squared Errror:',rf_reg_MSE)
+rf_reg_RMSE=np.sqrt(metrics.mean_squared_error(y_test,y_pred_RF))
+print('Mean Squared Errror:',rf_reg_RMSE)
