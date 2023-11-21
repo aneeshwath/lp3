@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract StudentDataManagement {
+    struct Student {
+        uint256 rollNumber;
+        string name;
+        uint256 age;
+    }
+
+    mapping(uint256 => Student) public students;
+    uint256 public totalStudents;
+
+    function addStudent(uint256 _rollNumber, string memory _name, uint256 _age) external {
+        // Check if the student with the given roll number already exists
+        require(students[_rollNumber].rollNumber == 0, "Student with this roll number already exists");
+
+        // Add the new student
+        students[_rollNumber] = Student(_rollNumber, _name, _age);
+        totalStudents++;
+    }
+
+    function getStudentByRollNumber(uint256 _rollNumber) external view returns (string memory, uint256) {
+        // Check if the student with the given roll number exists
+        require(students[_rollNumber].rollNumber != 0, "Student with this roll number does not exist");
+
+        // Return student data
+        return (students[_rollNumber].name, students[_rollNumber].age);
+    }
+}
+
+
+
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract one{
+    string college;
+    student[] stds;
+    // string class;
+    // uint div;
+
+    struct student{
+        string name;
+        uint roll;
+    }
+
+    constructor(string memory college){
+        college = college;
+    }
+
+    function getCollege() public view returns(string memory){
+        return college;
+    }
+
+    function addStudent(string memory name, uint roll) public {
+        stds.push(student(name, roll));
+    } 
+
+    function getStudentwihtname(uint roll) public view returns(string memory, uint){
+        student[] memory s = stds; 
+        for (uint i=0; i<stds.length; i++)
+        {
+            if (stds[i].roll == roll) {
+                return (s[i].name, s[i].roll);
+            }
+        }
+    }
+}
